@@ -5,10 +5,11 @@ import cv2
 import numpy as np
 from PIL import Image, ImageTk
 
+import config
 
 class Gallery:
     def __init__(self, master, call_back_hide):
-        self.frame_main = ttk.Frame(master)
+        self.frame_main = ttk.Frame(master, width=config.window_width, height=config.window_height)
         self.hide_frame = call_back_hide
         self.show_frame()
         self.getListImg()
@@ -23,15 +24,15 @@ class Gallery:
         )
     def getListImg(self): #actually get from parents
         list_image_path = [
-        "../logo2.png",
-        "D:/BG/5k-2560x1440-4k-wallpaper-forest-osx-apple-lake-water-yosemite-169.jpg",
-        "D:/BG/a_little_windy_by_shootingstarlogbook_deu36jc-fullview.jpg",
-        "D:/BG/abstract-nature-1920x1080-8k-21456-1536x864.jpg",
-        "D:/BG/aloe-2560x1440-green-4k-23513.jpg",
-        "D:/BG/alps-2560x1440-switzerland-mountains-clouds-5k-16936.jpg",
-        "D:/BG/antarctica-2560x1440-5k-4k-wallpaper-iceberg-blue-water-ocean-sea-1160.jpg",
-        "D:/BG/antarctica-2560x1440-iceberg-ocean-4k-16235.jpg",
-        "D:/BG/antarctica-2560x1440-iceberg-ocean-5k-16236.jpg"
+        "./sample_image/bear_cat.jpeg",
+        "./sample_image/cat.jpeg",
+        "./sample_image/dumpling_cat.jpeg",
+        "./sample_image/gamatoto.jpeg",
+        "./sample_image/hula_cat.jpeg",
+        "./sample_image/ototo.jpeg",
+        "./sample_image/puppet_cat.jpeg",
+        "./sample_image/rice_cat.jpeg",
+        "./sample_image/robo_cat.jpeg"
         ]
         self.list_image = []
         self.list_thumb = []
@@ -39,12 +40,12 @@ class Gallery:
             tmp =Image.open(path) 
             self.list_image.append(tmp) 
             thumb = tmp.copy()
-            thumb.thumbnail((150,150))
+            thumb.thumbnail((config.images_scroll_height-20, config.images_scroll_height-20))
             python_image = ImageTk.PhotoImage(thumb)
             self.list_thumb.append(python_image)
     def UI_initialisation(self):
         #menu info
-        self.frame_info = ttk.Frame(self.frame_main)
+        self.frame_info = ttk.Frame(self.frame_main, width=config.config_width, height=config.config_height)
         self.frame_info.pack(    
             ipadx=10,
             ipady=10,
@@ -59,6 +60,9 @@ class Gallery:
             ipady=10,
             fill='x'
         )
+
+        # ttk.Button(
+        # self.frame_info, text="Back", command=self.hide_frame).grid(row=0, column=0)
 
         self.label_title = Label( self.frame_info, text ="Hey!? How are you doing?" )
         self.label_title.pack(    
@@ -79,7 +83,7 @@ class Gallery:
 
         # Create A Gallery
 
-        self.gallery_frame_container = Frame(self.frame_main)
+        self.gallery_frame_container = Frame(self.frame_main, width=config.gallery_width, height=config.gallery_height)
 
         self.gallery_frame_container.pack(
             ipadx=10,
@@ -126,7 +130,7 @@ class Gallery:
         self.gallery_frame.pack()
         # self.frame_menu.config(relief=RIDGE, padding=(50, 15))
 
-        self.canvas_img_show = Canvas(self.gallery_frame, bg="gray", width=600, height=450)
+        self.canvas_img_show = Canvas(self.gallery_frame, bg="gray", width=config.canvas_width, height=config.canvas_height)
         self.canvas_img_show.grid(row=0, column=0, columnspan=10, rowspan=10)
         Button(
             self.gallery_frame, text="Remove").grid(
@@ -138,7 +142,7 @@ class Gallery:
             self.gallery_frame, text="Save all").grid(
             row=9, column=10, columnspan=2, padx=5, pady=5, sticky='sw')
 
-        self.canvas_scroll_thumb = Canvas(self.gallery_frame, width=600, height=150)
+        self.canvas_scroll_thumb = Canvas(self.gallery_frame, width=config.images_scroll_width, height=config.images_scroll_height)
         self.canvas_scroll_thumb.grid(row=10, column=3)
         # self.canvas_scroll_thumb.pack(side=LEFT,fill=BOTH,expand=1)
 
@@ -173,12 +177,12 @@ class Gallery:
         ratio = height / width
         new_width = width
         new_height = height
-        if height > 480 or width > 600:
+        if height > config.canvas_height or width > config.canvas_width:
             if ratio < 1:
-                new_width = 600
+                new_width = config.canvas_width
                 new_height = int(new_width * ratio)
             else:
-                new_height = 480
+                new_height = config.canvas_height
                 new_width = int(new_height * (width / height))
         new_image = cv2.resize(image, (new_width, new_height))
         self.new_image= ImageTk.PhotoImage(
