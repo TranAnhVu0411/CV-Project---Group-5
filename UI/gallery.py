@@ -45,7 +45,7 @@ class Gallery:
             self.list_thumb.append(python_image)
     def UI_initialisation(self):
         #menu info
-        self.frame_info = ttk.Frame(self.frame_main, width=config.config_width, height=config.config_height)
+        self.frame_info = ttk.Frame(self.frame_main)
         self.frame_info.pack(    
             ipadx=10,
             ipady=10,
@@ -83,7 +83,7 @@ class Gallery:
 
         # Create A Gallery
 
-        self.gallery_frame_container = Frame(self.frame_main, width=config.gallery_width, height=config.gallery_height)
+        self.gallery_frame_container = Frame(self.frame_main)
 
         self.gallery_frame_container.pack(
             ipadx=10,

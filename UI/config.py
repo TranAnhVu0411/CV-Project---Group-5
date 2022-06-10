@@ -1,10 +1,10 @@
 window_width = 1200
 window_height = 600
-config_width = 300
+config_width = 600
 config_height = window_height
 gallery_width = window_width-config_width
 gallery_height = window_height
 canvas_width = gallery_width
-canvas_height = 400
+canvas_height = 450
 images_scroll_width = gallery_width
 images_scroll_height = gallery_height-canvas_height
