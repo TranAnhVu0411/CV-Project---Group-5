@@ -7,9 +7,10 @@ from PIL import Image, ImageTk
 
 import config
 
+
 class Gallery:
     def __init__(self, master, call_back_hide):
-        self.frame_main = ttk.Frame(master, width=config.window_width, height=config.window_height)
+        self.frame_main = ttk.Frame(master, width=config.window_width, height=config.window_height )
         self.hide_frame = call_back_hide
         self.show_frame()
         self.getListImg()
@@ -49,7 +50,8 @@ class Gallery:
         self.frame_info.pack(    
             ipadx=10,
             ipady=10,
-            expand=True,
+            padx=30,
+            # expand=True,
             fill='both',
             side='left',
         )
@@ -64,7 +66,7 @@ class Gallery:
         # ttk.Button(
         # self.frame_info, text="Back", command=self.hide_frame).grid(row=0, column=0)
 
-        self.label_title = Label( self.frame_info, text ="Hey!? How are you doing?" )
+        self.label_title = Label( self.frame_info, text ="Hey!? How are you doing?" , width=35)
         self.label_title.pack(    
             ipadx=10,
             ipady=10,
@@ -76,6 +78,7 @@ class Gallery:
         self.label_name.pack(    
             ipadx=10,
             ipady=10,
+            padx=30,
             fill='x'
         )
         self.var_name.set("filename")
@@ -88,6 +91,7 @@ class Gallery:
         self.gallery_frame_container.pack(
             ipadx=10,
             ipady=10,
+            padx=(200,0),
             expand=True,
             fill='both',
             side='right'
@@ -102,7 +106,7 @@ class Gallery:
         # Create A Canvas scroll
 
         self.canvas_scroll = Canvas(self.gallery_frame_container)
-        self.canvas_scroll.pack(side=BOTTOM,fill=BOTH,expand=1)
+        self.canvas_scroll.pack(side=LEFT,fill=BOTH,expand=True)
 
 
         # Add A Scrollbars to Canvas
@@ -128,7 +132,7 @@ class Gallery:
         #menu
         self.gallery_frame = ttk.Frame(self.frame_scroll)
         self.gallery_frame.pack()
-        # self.frame_menu.config(relief=RIDGE, padding=(50, 15))
+        # self.gallery_frame.config(relief=RIDGE, padding=(50, 15))
 
         self.canvas_img_show = Canvas(self.gallery_frame, bg="gray", width=config.canvas_width, height=config.canvas_height)
         self.canvas_img_show.grid(row=0, column=0, columnspan=10, rowspan=10)
