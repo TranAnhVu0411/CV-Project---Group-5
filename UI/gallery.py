@@ -52,7 +52,7 @@ class Gallery:
         self.frame_info.pack(    
             ipadx=10,
             ipady=10,
-            padx=30,
+            padx=(75,0),
             # expand=True,
             fill='both',
             side='left',
@@ -93,7 +93,7 @@ class Gallery:
         self.gallery_frame_container.pack(
             ipadx=10,
             ipady=10,
-            padx=(200,0),
+            padx=(75,0),
             expand=True,
             fill='both',
             side='right'
