@@ -9,9 +9,9 @@ import config
 
 
 class Gallery:
-    def __init__(self, master, call_back_hide):
-        self.frame_main = ttk.Frame(master, width=config.window_width, height=config.window_height )
-        self.hide_frame = call_back_hide
+    def __init__(self, parent,showTransform):
+        self.showTransform = showTransform;
+        self.frame_main = ttk.Frame(parent.root, width=config.window_width, height=config.window_height)
         self.show_frame()
         self.getListImg()
         self.UI_initialisation()
@@ -23,6 +23,8 @@ class Gallery:
             fill='both',
             side='left',
         )
+    def hide_frame(self):
+        self.frame_main.pack_forget()
     def getListImg(self): #actually get from parents
         list_image_path = [
         "./sample_image/bear_cat.jpeg",
@@ -57,7 +59,7 @@ class Gallery:
         )
         # self.frame_info.grid(row=0, column=0, columnspan=10,  padx=5, pady=5)
         ttk.Button(
-        self.frame_info, text="Back", command=self.hide_frame).pack(    
+        self.frame_info, text="Back", command=self.showTransform).pack(    
             ipadx=10,
             ipady=10,
             fill='x'
