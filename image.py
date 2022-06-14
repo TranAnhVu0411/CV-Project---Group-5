@@ -16,3 +16,7 @@ class image_object:
 
         self.min_threshold = min_threshold
         self.max_threshold = max_threshold        
+
+def init():
+    global list_image_obj
+    list_image_obj = []

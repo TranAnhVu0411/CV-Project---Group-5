@@ -10,7 +10,6 @@ import edge_detection
 
 
 import config
-import gallery
 import image
 
 # set up values matrix (1,3,5,7,9,11)
@@ -206,7 +205,8 @@ class Transform:
         else:
             self.transform_image = edge_detection.edge_detection(self.image, *self.get_param())
             image_obj = image.image_object(self.transform_image, *self.get_param())
-            gallery.list_image.append(image_obj)            
+            image.list_image_obj.append(image_obj)
+            self.list_img_obj = image.list_image_obj
 
     def UI_initialisation(self):
         self.frame_main.columnconfigure(0, weight=1)

@@ -6,16 +6,15 @@ import numpy as np
 from PIL import Image, ImageTk
 
 import config
+import image
 
-global list_image 
-list_image = []
 
 class Gallery:
-    def __init__(self, parent,showTransform):
+    def __init__(self, parent,showTransform, list_img_obj):
         self.showTransform = showTransform;
         self.frame_main = ttk.Frame(parent.root, width=config.window_width, height=config.window_height)
         self.show_frame()
-        self.getListImg()
+        self.getListImg(list_img_obj)
         self.UI_initialisation()
     def show_frame(self):
         self.frame_main.pack(        
@@ -27,27 +26,19 @@ class Gallery:
         )
     def hide_frame(self):
         self.frame_main.pack_forget()
-    def getListImg(self): #actually get from parents
-        list_image_path = [
-        "./sample_image/bear_cat.jpeg",
-        "./sample_image/cat.jpeg",
-        "./sample_image/dumpling_cat.jpeg",
-        "./sample_image/gamatoto.jpeg",
-        "./sample_image/hula_cat.jpeg",
-        "./sample_image/ototo.jpeg",
-        "./sample_image/puppet_cat.jpeg",
-        "./sample_image/rice_cat.jpeg",
-        "./sample_image/robo_cat.jpeg"
-        ]
+
+    def getListImg(self, list_image_object): #actually get from parents
         self.list_image = []
         self.list_thumb = []
-        for path in list_image_path:
-            tmp =Image.open(path) 
+        for obj in list_image_object:
+            tmp =Image.fromarray(obj.img) 
             self.list_image.append(tmp) 
             thumb = tmp.copy()
             thumb.thumbnail((config.images_scroll_height-20, config.images_scroll_height-20))
             python_image = ImageTk.PhotoImage(thumb)
             self.list_thumb.append(python_image)
+        print(self.list_image)
+
     def UI_initialisation(self):
         #menu info
         self.frame_info = ttk.Frame(self.frame_main)
@@ -78,14 +69,14 @@ class Gallery:
         )
         self.var_name = StringVar("")
 
-        self.label_name = Label( self.frame_info, textvariable =self.var_name,wraplength=150, justify="center" )
-        self.label_name.pack(    
-            ipadx=10,
-            ipady=10,
-            padx=30,
-            fill='x'
-        )
-        self.var_name.set("filename")
+        # self.label_name = Label( self.frame_info, textvariable =self.var_name,wraplength=150, justify="center" )
+        # self.label_name.pack(    
+        #     ipadx=10,
+        #     ipady=10,
+        #     padx=30,
+        #     fill='x'
+        # )
+        # self.var_name.set("filename")
 
 
         # Create A Gallery
@@ -166,7 +157,6 @@ class Gallery:
         #setup list thumbnail button
         self.list_btn = []
         for ind, image in enumerate(self.list_image):
-            print(image.filename)
             button = Button(self.frame_thumb, image=self.list_thumb[ind])
             button.grid(row=5,column=ind,pady=10,padx=10)
             self.list_btn.append(button)
@@ -181,7 +171,7 @@ class Gallery:
     def display_image(self,image=None):
         self.canvas_img_show.delete("all")
         image =  np.array(image) #cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2RGB)
-        height, width, channels = image.shape
+        height, width = image.shape
         ratio = height / width
         new_width = width
         new_height = height
@@ -201,9 +191,10 @@ class Gallery:
             new_width / 2, new_height / 2,  image=self.new_image)
     
     def clickHandle(self,ind):
+        print(image.list_image_obj)
         print(ind)
         for btn in self.list_btn:
             btn.configure(state = NORMAL)
         self.list_btn[ind].configure(state =DISABLED)
-        self.var_name.set(self.list_image[ind].filename)
+        # self.var_name.set(self.list_image[ind].filename)
         self.display_image(self.list_image[ind])
