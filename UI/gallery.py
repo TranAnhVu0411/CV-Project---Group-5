@@ -7,6 +7,8 @@ from PIL import Image, ImageTk
 
 import config
 
+global list_image 
+list_image = []
 
 class Gallery:
     def __init__(self, parent,showTransform):
