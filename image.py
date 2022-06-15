@@ -18,7 +18,22 @@ class image_object:
         self.min_threshold = min_threshold
         self.max_threshold = max_threshold
     def show_info(self):
-        pass
+        info = "Image Name: "+ self.name+" \n"
+        info += "Blur Type: "+self.blur_type+"\n"
+        if self.blur_type != "None":
+            info += "Blur Kernel Size: "+str(self.blur_ksize)+"\n\n"
+        info += "Use Edge Detection: "+self.use_edge_detection+"\n"
+        if self.use_edge_detection != "no":
+            info += "Edge Detection Method: "+self.edge_detection_type+"\n"
+            if self.edge_detection_type == "Skipping Threshold":
+                info += "Type: "+self.gradient_type+"\n"
+                if self.gradient_type!="Prewitt":
+                    info += "Kernel Size: "+str(self.gradient_size)+"\n"
+                info += "Skipping Threshold: "+str(self.skipping_threshold)+"\n"
+            else:
+                info += "Min Threshold: "+str(self.min_threshold)+"\n"
+                info += "Max Threshold: "+str(self.max_threshold)+"\n"
+        return info
 
 def init():
     global list_image_obj

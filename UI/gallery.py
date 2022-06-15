@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter.filedialog import asksaveasfile
 
 import cv2
 import numpy as np
@@ -64,12 +65,6 @@ class Gallery:
         # ttk.Button(
         # self.frame_info, text="Back", command=self.hide_frame).grid(row=0, column=0)
 
-        self.label_title = Label( self.frame_info, text ="Hey!? How are you doing?" , width=35)
-        self.label_title.pack(    
-            ipadx=10,
-            ipady=10,
-            fill='x'
-        )
         self.var_name = StringVar("")
 
         self.label_name = Label( self.frame_info, textvariable =self.var_name,wraplength=150, justify="center" )
@@ -138,11 +133,11 @@ class Gallery:
             self.gallery_frame, text="Remove", command = self.delete).grid(
             row=5, column=10, columnspan=2,  padx=5, pady=5, sticky='sw')
         Button(
-            self.gallery_frame, text="Save").grid(
+            self.gallery_frame, text="Save", command = self.save).grid(
             row=6, column=10, columnspan=2,  padx=5, pady=5, sticky='sw')
-        Button(
-            self.gallery_frame, text="Save all").grid(
-            row=9, column=10, columnspan=2, padx=5, pady=5, sticky='sw')
+        # Button(
+        #     self.gallery_frame, text="Save all").grid(
+        #     row=9, column=10, columnspan=2, padx=5, pady=5, sticky='sw')
 
         self.canvas_scroll_thumb = Canvas(self.gallery_frame, width=config.images_scroll_width, height=config.images_scroll_height)
         self.canvas_scroll_thumb.grid(row=10, column=3)
@@ -205,7 +200,7 @@ class Gallery:
         for btn in self.list_btn:
             btn.configure(state = NORMAL)
         self.list_btn[ind].configure(state =DISABLED)
-        self.var_name.set(self.list_img_obj[ind].name)
+        self.var_name.set(self.list_img_obj[ind].show_info())
         self.display_image(self.list_image[ind])
     
     def delete(self):
@@ -217,3 +212,10 @@ class Gallery:
         self.canvas_img_show.destroy()
         self.canvas_img_show = Canvas(self.gallery_frame, bg="gray", width=config.canvas_width, height=config.canvas_height)
         self.canvas_img_show.grid(row=0, column=0, columnspan=10, rowspan=10)
+    
+    def save(self):
+        data = [('jpg files', '*.jpg'),
+                ('jpeg files', '*.jpeg'),
+                ('png files', '*.png'),]
+        file = asksaveasfile(filetypes = data, defaultextension = data)
+        self.list_image[self.ind].save(file.name)

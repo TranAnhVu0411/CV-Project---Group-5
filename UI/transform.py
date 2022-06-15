@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog as fd
 from tkinter import messagebox, simpledialog
+from tkinter.messagebox import askyesno
+
 from tkinter import *
 from tkinter import ttk
 import cv2
@@ -47,31 +49,62 @@ class Transform:
             ('jpeg files', '*.jpeg'),
             ('png files', '*.png'),
         )
-
-        self.filename = fd.askopenfilename(
-            title='Open a file',
-            initialdir='/',
-            filetypes=filetypes)
-        if(self.filename != ''):
-            self.image = cv2.imread(self.filename, cv2.IMREAD_GRAYSCALE)
-            height, width = self.image.shape
-            ratio = height / width
-            self.new_width = width
-            self.new_height = height
-            if height > config.main_canvas_height or width > config.main_canvas_width:
-                if ratio < 1:
-                    self.new_width = config.main_canvas_width
-                    self.new_height = int(self.new_width * ratio)
+        if self.filename!="":
+            answer = askyesno(title='Confirmation',
+                    message='Old image will be lost \n Are you sure that you want to open another image?')
+            if answer:
+                self.filename = fd.askopenfilename(
+                    title='Open a file',
+                    initialdir='/',
+                    filetypes=filetypes)
+                if self.filename!="":
+                    self.image = cv2.imread(self.filename, cv2.IMREAD_GRAYSCALE)
+                    height, width = self.image.shape
+                    ratio = height / width
+                    self.new_width = width
+                    self.new_height = height
+                    if height > config.main_canvas_height or width > config.main_canvas_width:
+                        if ratio < 1:
+                            self.new_width = config.main_canvas_width
+                            self.new_height = int(self.new_width * ratio)
+                        else:
+                            self.new_height = config.main_canvas_height
+                            self.new_width = int(self.new_height * (1 / ratio))
+                    new_image = cv2.resize(self.image, (self.new_width, self.new_height))
+                    self.new_image= ImageTk.PhotoImage(
+                        Image.fromarray(new_image))
+                    # self.canvas.config(width=self.new_width, height=self.new_height)
+                    self.canvas.create_image(
+                        config.main_canvas_width / 2, config.main_canvas_height / 2,  image=self.new_image)
                 else:
-                    self.new_height = config.main_canvas_height
-                    self.new_width = int(self.new_height * (1 / ratio))
-            new_image = cv2.resize(self.image, (self.new_width, self.new_height))
-            self.new_image= ImageTk.PhotoImage(
-                Image.fromarray(new_image))
-            # self.canvas.config(width=self.new_width, height=self.new_height)
-            self.canvas.create_image(
-                config.main_canvas_width / 2, config.main_canvas_height / 2,  image=self.new_image)
+                    self.canvas.destroy()
+                    self.canvas = Canvas(self.frame_main, bg="gray", width=config.main_canvas_width, height=config.main_canvas_height)
+                    self.canvas.grid(column=1, row=0)
 
+        else:
+            self.filename = fd.askopenfilename(
+                title='Open a file',
+                initialdir='/',
+                filetypes=filetypes)
+            if self.filename!="":
+                self.image = cv2.imread(self.filename, cv2.IMREAD_GRAYSCALE)
+                height, width = self.image.shape
+                ratio = height / width
+                self.new_width = width
+                self.new_height = height
+                if height > config.main_canvas_height or width > config.main_canvas_width:
+                    if ratio < 1:
+                        self.new_width = config.main_canvas_width
+                        self.new_height = int(self.new_width * ratio)
+                    else:
+                        self.new_height = config.main_canvas_height
+                        self.new_width = int(self.new_height * (1 / ratio))
+                new_image = cv2.resize(self.image, (self.new_width, self.new_height))
+                self.new_image= ImageTk.PhotoImage(
+                    Image.fromarray(new_image))
+                # self.canvas.config(width=self.new_width, height=self.new_height)
+                self.canvas.create_image(
+                    config.main_canvas_width / 2, config.main_canvas_height / 2,  image=self.new_image)
     def initBlurConfigContainer(self):
         # Choose Blur Type
         blur_type_label=ttk.Label(self.blur_config_container, text="Blur Type: ")
@@ -206,10 +239,10 @@ class Transform:
             self.transform_image = edge_detection.edge_detection(self.image, *self.get_param())
             image_name = simpledialog.askstring("Input", "Image Name?",
                                 parent=self.parent.root)
-            print(image_name)
-            image_obj = image.image_object(self.transform_image, image_name, *self.get_param())
-            image.list_image_obj.append(image_obj)
-            self.list_img_obj = image.list_image_obj
+            if image_name != None:
+                image_obj = image.image_object(self.transform_image, image_name, *self.get_param())
+                image.list_image_obj.append(image_obj)
+                self.list_img_obj = image.list_image_obj
 
     def UI_initialisation(self):
         self.frame_main.columnconfigure(0, weight=1)
