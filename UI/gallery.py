@@ -11,14 +11,17 @@ import image
 
 
 class Gallery:
-    def __init__(self, parent,showTransform, list_img_obj):
+    def __init__(self, parent,showTransform):
         self.showTransform = showTransform;
         self.parent = parent
         self.frame_main = ttk.Frame(parent.root, width=config.window_width, height=config.window_height)
-        self.show_frame()
-        self.getListImg(list_img_obj)
         self.UI_initialisation()
+        self.list_btn = []
+        self.show_frame()
     def show_frame(self):
+        self.getListImg(image.list_image_obj)
+        #setup list thumbnail button
+        self.thumbnail_init()
         self.frame_main.pack(        
             ipadx=10,
             ipady=10,
@@ -26,6 +29,8 @@ class Gallery:
             fill='both',
             side='left',
         )
+        
+
     def hide_frame(self):
         self.frame_main.pack_forget()
 
@@ -152,9 +157,6 @@ class Gallery:
         self.canvas_scroll_thumb.configure(xscrollcommand=x_scrollbar_thumb.set)
         self.canvas_scroll_thumb.bind("<Configure>",lambda e: self.canvas_scroll_thumb.config(scrollregion= self.canvas_scroll_thumb.bbox(ALL))) 
 
-        #setup list thumbnail button
-        self.list_btn = []
-        self.thumbnail_init()
 
         self.canvas_scroll_thumb.create_window((0,0),window= self.frame_thumb, anchor="nw")
 
@@ -166,7 +168,7 @@ class Gallery:
         if len(self.list_btn)!=0:
             for btn in self.list_btn:
                 btn.destroy()
-            self.list_btn = []
+        self.list_btn = []
         for ind, image in enumerate(self.list_image):
             button = Button(self.frame_thumb, image=self.list_thumb[ind])
             button.grid(row=5,column=ind,pady=10,padx=10)
@@ -191,9 +193,8 @@ class Gallery:
         self.new_image= ImageTk.PhotoImage(
             Image.fromarray(new_image))
 
-        self.canvas_img_show.config(width=new_width, height=new_height)
-        self.canvas_img_show.create_image(
-            new_width / 2, new_height / 2,  image=self.new_image)
+        # self.canvas_img_show.config(width=new_width, height=new_height)
+        self.canvas_img_show.create_image(config.canvas_width / 2, config.canvas_height / 2,  image=self.new_image)
     
     def clickHandle(self,ind):
         self.ind = ind
@@ -209,9 +210,7 @@ class Gallery:
         del self.list_thumb[self.ind]
 
         self.thumbnail_init()
-        self.canvas_img_show.destroy()
-        self.canvas_img_show = Canvas(self.gallery_frame, bg="gray", width=config.canvas_width, height=config.canvas_height)
-        self.canvas_img_show.grid(row=0, column=0, columnspan=10, rowspan=10)
+        self.canvas_img_show.delete("all")
     
     def save(self):
         data = [('jpg files', '*.jpg'),
