@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog as fd
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 from tkinter import *
 from tkinter import ttk
 import cv2
@@ -22,7 +22,7 @@ for i in range(max+1):
 options = {'padx': 5, 'pady': 5}
 
 class Transform:
-    def __init__(self, parent,showGallery):
+    def __init__(self, parent, showGallery):
         self.parent = parent
         self.showGallery = showGallery;
         self.filename=''
@@ -204,7 +204,10 @@ class Transform:
             messagebox.showwarning("Warning", "You haven't open any image")
         else:
             self.transform_image = edge_detection.edge_detection(self.image, *self.get_param())
-            image_obj = image.image_object(self.transform_image, *self.get_param())
+            image_name = simpledialog.askstring("Input", "Image Name?",
+                                parent=self.parent.root)
+            print(image_name)
+            image_obj = image.image_object(self.transform_image, image_name, *self.get_param())
             image.list_image_obj.append(image_obj)
             self.list_img_obj = image.list_image_obj
 

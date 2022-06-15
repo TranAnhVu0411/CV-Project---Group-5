@@ -12,6 +12,7 @@ import image
 class Gallery:
     def __init__(self, parent,showTransform, list_img_obj):
         self.showTransform = showTransform;
+        self.parent = parent
         self.frame_main = ttk.Frame(parent.root, width=config.window_width, height=config.window_height)
         self.show_frame()
         self.getListImg(list_img_obj)
@@ -28,9 +29,11 @@ class Gallery:
         self.frame_main.pack_forget()
 
     def getListImg(self, list_image_object): #actually get from parents
+        self.list_img_obj=[]
         self.list_image = []
         self.list_thumb = []
         for obj in list_image_object:
+            self.list_img_obj.append(obj)
             tmp =Image.fromarray(obj.img) 
             self.list_image.append(tmp) 
             thumb = tmp.copy()
@@ -69,14 +72,14 @@ class Gallery:
         )
         self.var_name = StringVar("")
 
-        # self.label_name = Label( self.frame_info, textvariable =self.var_name,wraplength=150, justify="center" )
-        # self.label_name.pack(    
-        #     ipadx=10,
-        #     ipady=10,
-        #     padx=30,
-        #     fill='x'
-        # )
-        # self.var_name.set("filename")
+        self.label_name = Label( self.frame_info, textvariable =self.var_name,wraplength=150, justify="center" )
+        self.label_name.pack(    
+            ipadx=10,
+            ipady=10,
+            padx=30,
+            fill='x'
+        )
+        self.var_name.set("filename")
 
 
         # Create A Gallery
@@ -132,7 +135,7 @@ class Gallery:
         self.canvas_img_show = Canvas(self.gallery_frame, bg="gray", width=config.canvas_width, height=config.canvas_height)
         self.canvas_img_show.grid(row=0, column=0, columnspan=10, rowspan=10)
         Button(
-            self.gallery_frame, text="Remove").grid(
+            self.gallery_frame, text="Remove", command = self.delete).grid(
             row=5, column=10, columnspan=2,  padx=5, pady=5, sticky='sw')
         Button(
             self.gallery_frame, text="Save").grid(
@@ -156,17 +159,24 @@ class Gallery:
 
         #setup list thumbnail button
         self.list_btn = []
-        for ind, image in enumerate(self.list_image):
-            button = Button(self.frame_thumb, image=self.list_thumb[ind])
-            button.grid(row=5,column=ind,pady=10,padx=10)
-            self.list_btn.append(button)
-            button.configure(command= lambda ind=ind: self.clickHandle(ind) )
+        self.thumbnail_init()
 
         self.canvas_scroll_thumb.create_window((0,0),window= self.frame_thumb, anchor="nw")
 
         # Add that New Frame a Window In The Canvas
         self.canvas_scroll.create_window((0,0),window= self.frame_scroll, anchor="nw")
-
+    
+    def thumbnail_init(self):
+        #setup list thumbnail button
+        if len(self.list_btn)!=0:
+            for btn in self.list_btn:
+                btn.destroy()
+            self.list_btn = []
+        for ind, image in enumerate(self.list_image):
+            button = Button(self.frame_thumb, image=self.list_thumb[ind])
+            button.grid(row=5,column=ind,pady=10,padx=10)
+            self.list_btn.append(button)
+            button.configure(command= lambda ind=ind: self.clickHandle(ind) )
 
     def display_image(self,image=None):
         self.canvas_img_show.delete("all")
@@ -191,10 +201,19 @@ class Gallery:
             new_width / 2, new_height / 2,  image=self.new_image)
     
     def clickHandle(self,ind):
-        print(image.list_image_obj)
-        print(ind)
+        self.ind = ind
         for btn in self.list_btn:
             btn.configure(state = NORMAL)
         self.list_btn[ind].configure(state =DISABLED)
-        # self.var_name.set(self.list_image[ind].filename)
+        self.var_name.set(self.list_img_obj[ind].name)
         self.display_image(self.list_image[ind])
+    
+    def delete(self):
+        del image.list_image_obj[self.ind]
+        del self.list_image[self.ind]
+        del self.list_thumb[self.ind]
+
+        self.thumbnail_init()
+        self.canvas_img_show.destroy()
+        self.canvas_img_show = Canvas(self.gallery_frame, bg="gray", width=config.canvas_width, height=config.canvas_height)
+        self.canvas_img_show.grid(row=0, column=0, columnspan=10, rowspan=10)
