@@ -55,7 +55,12 @@ class Transform:
                     filetypes=filetypes)
                 if self.filename!="":
                     self.image = cv2.imread(self.filename, cv2.IMREAD_GRAYSCALE)
+                    self.edge_detect_config_container
                     self.transform_image = self.image.copy()
+                    self.info_transform = ("None", 1, 
+                                          "no", "Canny",
+                                          "Prewitt", "1", "1",
+                                          "100", "200")
                     height, width = self.image.shape
                     ratio = height / width
                     self.new_width = width
@@ -83,6 +88,11 @@ class Transform:
                 filetypes=filetypes)
             if self.filename!="":
                 self.image = cv2.imread(self.filename, cv2.IMREAD_GRAYSCALE)
+                self.transform_image = self.image.copy()
+                self.info_transform = ("None", 1, 
+                                          "no", "Canny",
+                                          "Prewitt", "1", "1",
+                                          "100", "200")
                 height, width = self.image.shape
                 ratio = height / width
                 self.new_width = width
@@ -219,7 +229,8 @@ class Transform:
         if self.filename=="":
             messagebox.showwarning("Warning", "You haven't open any image")
         else:
-            self.transform_image = edge_detection.edge_detection(self.image, *self.get_param())
+            self.info_transform = self.get_param()
+            self.transform_image = edge_detection.edge_detection(self.image, *self.info_transform)
             
             new_transform_image = cv2.resize(self.transform_image, (self.new_width, self.new_height))
             self.new_transform_image= ImageTk.PhotoImage(Image.fromarray(new_transform_image))
@@ -235,7 +246,7 @@ class Transform:
             image_name = simpledialog.askstring("Input", "Image Name?",
                                 parent=self.parent.root)
             if image_name != None:
-                image_obj = image.image_object(self.transform_image, image_name, *self.get_param())
+                image_obj = image.image_object(self.transform_image, image_name, *self.info_transform)
                 image.list_image_obj.append(image_obj)
 
     def UI_initialisation(self):
