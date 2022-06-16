@@ -54,6 +54,7 @@ class Transform:
                     initialdir='/',
                     filetypes=filetypes)
                 if self.filename!="":
+                    self.canvas.delete("all")
                     self.image = cv2.imread(self.filename, cv2.IMREAD_GRAYSCALE)
                     self.edge_detect_config_container
                     self.transform_image = self.image.copy()
