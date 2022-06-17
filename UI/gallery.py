@@ -208,6 +208,7 @@ class Gallery:
         del image.list_image_obj[self.ind]
         del self.list_image[self.ind]
         del self.list_thumb[self.ind]
+        self.var_name.set("filename")
 
         self.thumbnail_init()
         self.canvas_img_show.delete("all")
