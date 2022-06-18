@@ -1,6 +1,7 @@
+import os
 from tkinter import *
-from tkinter import ttk
-from tkinter.filedialog import asksaveasfile
+from tkinter import messagebox, ttk
+from tkinter.filedialog import askdirectory, asksaveasfile
 
 import cv2
 import numpy as np
@@ -140,9 +141,9 @@ class Gallery:
         Button(
             self.gallery_frame, text="Save", command = self.save).grid(
             row=6, column=10, columnspan=2,  padx=5, pady=5, sticky='sw')
-        # Button(
-        #     self.gallery_frame, text="Save all").grid(
-        #     row=9, column=10, columnspan=2, padx=5, pady=5, sticky='sw')
+        Button(
+            self.gallery_frame, text="Save all", command = self.save_all).grid(
+            row=9, column=10, columnspan=2, padx=5, pady=5, sticky='sw')
 
         self.canvas_scroll_thumb = Canvas(self.gallery_frame, width=config.images_scroll_width, height=config.images_scroll_height)
         self.canvas_scroll_thumb.grid(row=10, column=3)
@@ -205,17 +206,32 @@ class Gallery:
         self.display_image(self.list_image[ind])
     
     def delete(self):
+        if self.ind is None:
+            return
         del image.list_image_obj[self.ind]
         del self.list_image[self.ind]
         del self.list_thumb[self.ind]
         self.var_name.set("filename")
-
+        self.ind = None
         self.thumbnail_init()
         self.canvas_img_show.delete("all")
     
     def save(self):
+        if self.ind is None:
+            return
         data = [('jpg files', '*.jpg'),
                 ('jpeg files', '*.jpeg'),
                 ('png files', '*.png'),]
         file = asksaveasfile(filetypes = data, defaultextension = data)
+        print(file)
         self.list_image[self.ind].save(file.name)
+    def save_all(self):
+        if len(self.list_image) <= 0:
+            messagebox.showerror("empty list!")
+            return
+        save_path = askdirectory()
+        for img_obj in image.list_image_obj:
+            file_name = img_obj.show_info().replace(":","_").replace(" ","").replace("\n","-")+".jpg"
+            print(file_name)
+            cv2.imwrite(os.path.join(save_path,file_name),img_obj.img)
+        messagebox.showinfo("save successfully")
