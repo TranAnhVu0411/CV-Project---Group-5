@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 def blur(gray, blur_type, blur_ksize):
     """
     img: gray image
@@ -78,7 +79,8 @@ def laplacian_edge_detection(img_blur, laplacian_ksize, skipping_threshold):
     
     # calculate magnitude
     img_laplacian = cv2.Laplacian(img_blur, cv2.CV_64F, ksize=laplacian_ksize) 
-    
+    #convert to uint8 array
+    img_laplacian = cv2.convertScaleAbs(img_laplacian) 
     # ignore weakly pixel
     for i in range(img_laplacian.shape[0]):
         for j in range(img_laplacian.shape[1]):
