@@ -225,10 +225,40 @@ class Transform:
                 use_edge_detection, edge_detection_type,
                 gradient_type, gradient_size, skipping_threshold,
                 max_threshold, min_threshold)
-
+    def check_params(self):
+        try:
+            blur_type = self.blur_type.get()
+            blur_ksize = self.blur_size.get()
+            if blur_type == "Mean filter" or  blur_type == "Gaussian filter":
+                if blur_ksize not in [3,5,7]:
+                    messagebox.showerror("Error", "Blurr Size is must be 1,3,5 or 7");
+                    return False
+            edge_detection_type = self.detection_type_notebook.tab(self.detection_type_notebook.select(), "text")
+            if edge_detection_type=="Skipping Threshold":
+                if self.gradient_size.get() not in [3,1,5,7]:
+                    messagebox.showerror("Error", "Kernel Size is must be 1,3,5 or 7");
+                    return False
+                if (self.skipping_threshold.get() >255 or self.skipping_threshold.get()<0):
+                    messagebox.showerror("Error", "Skipping Threshold is must be 0..255");
+                    return False
+            else:
+                min_threshold = self.min_threshold.get()
+                max_threshold = self.max_threshold.get()
+                if min_threshold > 255 or max_threshold < 0 or min_threshold < 0 or max_threshold >255:
+                    messagebox.showerror("Error", "Skipping Threshold is must be 0..255");
+                    return False
+                if min_threshold >= max_threshold :
+                    messagebox.showerror("Error", "Min threshold is must be less than max threshold");
+                    return False
+            return True
+        except:
+            messagebox.showerror("Error", "Error input type");
+            return False
     def transform(self):
-        if self.filename=="":
+        if self.filename == "":
             messagebox.showwarning("Warning", "You haven't open any image")
+        elif not self.check_params():
+            return
         else:
             self.info_transform = self.get_param()
             self.transform_image = edge_detection.edge_detection(self.image, *self.info_transform)
