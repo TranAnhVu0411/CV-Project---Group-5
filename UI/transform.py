@@ -11,8 +11,8 @@ import config
 import edge_detection
 import image
 
-# set up values matrix (1,3,5,7,9,11)
-max = 11
+# set up values matrix (1,3,5,7)
+max = 7
 values = []
 for i in range(max+1):
     if i%2!=0:
@@ -128,13 +128,15 @@ class Transform:
                 self.blur_config_frame.grid_forget()
             else:
                 self.blur_config_frame.grid(column=0, row=1, columnspan=2)
+            self.transform()
         self.blur_type_combobox.bind('<<ComboboxSelected>>', show_blur_config)
         
         # Set Kernel Size
         blursize_label=ttk.Label(self.blur_config_frame, text="Blur Kernel Size: ")
         blursize_label.grid(column=0, row=0, **options)
         self.blur_size=tk.IntVar()
-        blursize_spinbox=ttk.Spinbox(self.blur_config_frame, from_=1, to=max, values=values, textvariable=self.blur_size, wrap=True)
+        
+        blursize_spinbox=ttk.Spinbox(self.blur_config_frame, from_=1, to=max, values=values, textvariable=self.blur_size, wrap=True,command= self.transform)
         blursize_spinbox.delete(0,"end") # set default value to 1
         blursize_spinbox.insert(0,1)
         blursize_spinbox.grid(column=1, row=0, **options)
@@ -151,9 +153,13 @@ class Transform:
         threshold_label=ttk.Label(self.threshold_frame, text="Threshold: ")
         threshold_label.grid(column=0, row=0, **options)
         self.skipping_threshold=tk.IntVar()
-        threshold_spinbox=ttk.Spinbox(self.threshold_frame, from_=1, to=255, textvariable=self.skipping_threshold, wrap=True)
-        threshold_spinbox.delete(0,"end") # set default value to 1
-        threshold_spinbox.insert(0,1)
+        # threshold_spinbox=ttk.Spinbox(self.threshold_frame, from_=1, to=255, textvariable=self.skipping_threshold, wrap=True)
+        # threshold_spinbox.delete(0,"end") # set default value to 1
+        # threshold_spinbox.insert(0,1)
+
+        threshold_spinbox = Scale(
+            self.threshold_frame, from_=1, to=255, orient=HORIZONTAL,variable=self.skipping_threshold,command=lambda e : self.transform())
+        threshold_spinbox.set(20)
         threshold_spinbox.grid(column=1, row=0, **options)
 
         # config gradient type
@@ -177,7 +183,7 @@ class Transform:
         kernelsize_label=ttk.Label(self.gradient_config_frame, text="Kernel Size: ")
         kernelsize_label.grid(column=0, row=0, **options)
         self.gradient_size=tk.IntVar()
-        kernelsize_spinbox=ttk.Spinbox(self.gradient_config_frame, from_=1, to=max, values=values, textvariable=self.gradient_size)
+        kernelsize_spinbox=ttk.Spinbox(self.gradient_config_frame, from_=1, to=max, values=values, textvariable=self.gradient_size,command=lambda: self.transform())
         kernelsize_spinbox.delete(0,"end")
         kernelsize_spinbox.insert(0,1)
         kernelsize_spinbox.grid(column=1, row=0, **options)
@@ -191,17 +197,24 @@ class Transform:
         max_threshold_label.grid(column=0, row=0, **options)
         self.max_threshold=tk.IntVar()
         max_threshold_spinbox=ttk.Spinbox(canny_frame, from_=1, to=255, textvariable=self.max_threshold, wrap=True)
-        max_threshold_spinbox.delete(0,"end") # set default value to 200
-        max_threshold_spinbox.insert(0,200)
+        max_threshold_spinbox = Scale(
+            canny_frame, from_=1, to=255, orient=HORIZONTAL,variable=self.max_threshold,command=lambda e : self.transform())
+        max_threshold_spinbox.set(200)
+        # max_threshold_spinbox.delete(0,"end") # set default value to 200
+        # max_threshold_spinbox.insert(0,200)
         max_threshold_spinbox.grid(column=1, row=0, **options)
 
         # config min threshold (V1)
         min_threshold_label=ttk.Label(canny_frame, text="Min Threshold: ")
         min_threshold_label.grid(column=0, row=1, **options)
         self.min_threshold=tk.IntVar()
-        min_threshold_spinbox=ttk.Spinbox(canny_frame, from_=1, to=255, textvariable=self.min_threshold, wrap=True)
-        min_threshold_spinbox.delete(0,"end") # set default value to 100
-        min_threshold_spinbox.insert(0,100)
+        # min_threshold_spinbox=ttk.Spinbox(canny_frame, from_=1, to=255, textvariable=self.min_threshold, wrap=True)
+        # min_threshold_spinbox.delete(0,"end") # set default value to 100
+        # min_threshold_spinbox.insert(0,100)
+        min_threshold_spinbox = Scale(
+            canny_frame, from_=1, to=255, orient=HORIZONTAL,variable=self.min_threshold,command=lambda e : self.transform())
+        max_threshold_spinbox.set(100)
+        
         min_threshold_spinbox.grid(column=1, row=1, **options)
 
         self.detection_type_notebook.add(canny_frame, text='Canny')
@@ -230,7 +243,7 @@ class Transform:
             blur_type = self.blur_type.get()
             blur_ksize = self.blur_size.get()
             if blur_type == "Mean filter" or  blur_type == "Gaussian filter":
-                if blur_ksize not in [3,5,7]:
+                if blur_ksize not in [1,3,5,7]:
                     messagebox.showerror("Error", "Blurr Size is must be 1,3,5 or 7");
                     return False
             edge_detection_type = self.detection_type_notebook.tab(self.detection_type_notebook.select(), "text")
